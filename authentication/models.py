@@ -79,5 +79,5 @@ class User(AbstractUser):
         db_table = 'Usuário'
 
     def __str__(self) -> str:
-        return  self.email
+        return  self.username
     
