@@ -35,7 +35,7 @@ class ProdutoListView(APIView):
         return Response(serializer.data)
         
 
-@method_decorator([csrf_exempt],name='dispatch')
+#@method_decorator([csrf_exempt],name='dispatch')
 class CategoriaView(APIView):
     def post(self,request:Request) -> Response:
         
@@ -51,7 +51,7 @@ class CategoriaView(APIView):
              return Response({"error": "Erro ao cadastrar a categoria."},status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator([csrf_exempt],name='dispatch')
+#@method_decorator([csrf_exempt],name='dispatch')
 class FabricanteView(APIView):
     def post(self,request:Request) -> Response:
         
@@ -70,7 +70,7 @@ class FabricanteView(APIView):
 class ProdutoView(APIView):
     
     def get(self,request:Request) -> Response:
-        produto = Produto.objects.all() 
+        produto = Produto.objects.all()
         if produto is not None:
             serializer = ProdutoSerializer(produto,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

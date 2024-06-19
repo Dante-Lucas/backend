@@ -22,24 +22,13 @@ class RegisterAPIView(APIView):
 
     def post(self, request:Request) -> Response:
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            username = serializer.validated_data.get('username')
-            email = serializer.validated_data.get('email')
-            password = serializer.validated_data.get('password')
-            data_nascimento = serializer.validated_data.get('data_nascimento')
-            users = User.objects.filter(username=username, email=email)
-            if users.exists():
-                return Response({'error': 'Usuário já existe'}, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid(): 
             try:
-                user = User.objects.create_user(username=username,
-                                                email=email,
-                                                password=password,
-                                                data_nascimento=data_nascimento)
+                serializer.save()    
                 return Response({'Success': 'Usuário criado com sucesso'}, status=status.HTTP_201_CREATED)
             except IntegrityError:
                 return Response({'error': 'Erro ao criar o usuário'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request:Request) -> Response:
         return Response({'detail': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -57,10 +46,8 @@ class LoginAPIView(APIView):
             if user is not None:
                 auth.login(request, user)
                 return Response({'Success': 'Logado com sucesso'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request:Request) -> Response:
         return Response({'detail': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
