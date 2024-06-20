@@ -12,6 +12,25 @@ class FabricanteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProdutoSerializer(serializers.ModelSerializer):
+    fabricante = serializers.CharField(write_only=True)
+    categoria = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = Produto
-        fields = '__all__'
+        fields = ['id', 'nome_produto', 'descricao', 'preco', 'estoque', 'fabricante', 'categoria']
+
+    def create(self, validated_data):
+        fabricante = validated_data.pop('fabricante')
+        categoria = validated_data.pop('categoria', None)
+
+        try:
+            fabricantes,created = Fabricante.objects.get_or_create(nome=fabricante)
+        except Fabricante.DoesNotExist:
+            raise serializers.ValidationError('Fabricante não encontrado')
+        
+        categorias =None
+        try:
+            cate, created = Categoria.objects.get_or_create(nome=categoria)
+        except Categoria.DoesNotExist:
+            raise serializers.ValidationError('Categoria não encontrada')
+        produto = Produto.objects.create(fabricante=fabricantes, categoria=categorias, **validated_data) 
+        return produto

@@ -87,8 +87,8 @@ class ProdutoView(APIView):
             categoria=serializer.validated_data.get('categoria') 
         with transaction.atomic():
             try:
-                fabricantes = Fabricante.objects.get(pk=fabricante)
-                categorias = Categoria.objects.get(pk=categoria)
+                #fabricantes = Fabricante.objects.get(pk=fabricante)
+                #categorias = Categoria.objects.get(pk=categoria)
                 
                 produto = Produto(
                         user=request.user,
@@ -96,13 +96,13 @@ class ProdutoView(APIView):
                         descricao=descricao,
                         preco=preco,
                         estoque=quantidade,
-                        fabricante=fabricantes,
-                        categoria=categorias
+                        fabricante=fabricante,
+                        categoria=categoria
                     )
                 produto.save()
                 return Response({'message-success':'Produto salvo com sucesso!'},serializer.data, status=status.HTTP_201_CREATED)
-            except Exception as e:
-                return Response({'message':'Erro ao enviar o cadastro. motivo {e}'},status=status.HTTP_400_BAD_REQUEST)
+            except IntegrityError as e:
+                return Response({'message':f'Erro ao enviar o cadastro. motivo {e}'},status=status.HTTP_400_BAD_REQUEST)
             
 class ProdutoDetailsView(APIView):
     def get(request,id):
