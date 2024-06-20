@@ -79,31 +79,16 @@ class ProdutoView(APIView):
     def post(self,request:Request) -> Response:
         serializer=ProdutoSerializer(data=request.data)
         if serializer.is_valid():
-            nome_produto=serializer.validated_data.get('nome_produto')
-            descricao=serializer.validated_data.get('descricao')
-            preco=serializer.validated_data.get('preco')                        
-            quantidade=serializer.validated_data.get('quantidade')
-            fabricante=serializer.validated_data.get('fabricante')
-            categoria=serializer.validated_data.get('categoria') 
-        with transaction.atomic():
-            try:
-                #fabricantes = Fabricante.objects.get(pk=fabricante)
-                #categorias = Categoria.objects.get(pk=categoria)
+            with transaction.atomic():
+                try:
+                    #fabricantes = Fabricante.objects.get(pk=fabricante)
+                    #categorias = Categoria.objects.get(pk=categoria)
+
+                    serializer.save()
+                    return Response({'message-success':'Produto salvo com sucesso!'},serializer.data, status=status.HTTP_201_CREATED)
+                except IntegrityError as e:
+                    return Response({'message':f'Erro ao enviar o cadastro. motivo {e}'},status=status.HTTP_400_BAD_REQUEST)
                 
-                produto = Produto(
-                        user=request.user,
-                        nome_produto=nome_produto,
-                        descricao=descricao,
-                        preco=preco,
-                        estoque=quantidade,
-                        fabricante=fabricante,
-                        categoria=categoria
-                    )
-                produto.save()
-                return Response({'message-success':'Produto salvo com sucesso!'},serializer.data, status=status.HTTP_201_CREATED)
-            except IntegrityError as e:
-                return Response({'message':f'Erro ao enviar o cadastro. motivo {e}'},status=status.HTTP_400_BAD_REQUEST)
-            
 class ProdutoDetailsView(APIView):
     def get(request,id):
         produto = get_object_or_404(Produto,id=id)
