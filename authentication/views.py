@@ -3,6 +3,7 @@ from django.contrib import auth
 from django.urls import reverse
 from django.db import IntegrityError
 from django.utils.decorators import method_decorator
+from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -25,7 +26,7 @@ class RegisterAPIView(APIView):
         if serializer.is_valid(): 
             try:
                 serializer.save()    
-                return Response({'Success': 'Usuário criado com sucesso'}, status=status.HTTP_201_CREATED)
+                return Response({'success': 'Usuário criado com sucesso'}, status=status.HTTP_201_CREATED)
             except IntegrityError:
                 return Response({'error': 'Erro ao criar o usuário'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -45,7 +46,8 @@ class LoginAPIView(APIView):
             user = auth.authenticate(username=username, password=password)
             if user is not None:
                 auth.login(request, user)
-                return Response({'Success': 'Logado com sucesso'}, status=status.HTTP_200_OK)
+                csrf_token = get_token(request)
+                return Response({'success': 'Logado com sucesso', 'csrf_token': csrf_token}, status=status.HTTP_200_OK)
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,4 +61,4 @@ class LogoutAPIView(APIView):
     renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
     def post(self,request:Request) -> Response:
             auth.logout(request)
-            return Response({'Sucess':'Deslogado com sucesso'}, status=status.HTTP_200_OK)
+            return Response({'success':'Deslogado com sucesso'}, status=status.HTTP_200_OK)
