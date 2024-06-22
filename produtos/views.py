@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from authentication.models import User
 from .serializers import ProdutoSerializer,CategoriaSerializer,FabricanteSerializer
 from .models import Produto,Categoria,Fabricante
@@ -68,13 +68,41 @@ class FabricanteView(APIView):
 
 
 class ProdutoView(APIView):
-    
+    permission_classes = [AllowAny]
     def get(self,request:Request) -> Response:
-        produto = Produto.objects.all()
-        if produto is not None:
-            serializer = ProdutoSerializer(produto,many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({'menssage':'Nenhum produto encontrado'},status=status.HTTP_404_NOT_FOUND)
+        produtos = Produto.objects.all()
+
+        list_produtos = []
+
+        for produto in produtos:
+            categoria = Categoria.objects.get(id=produto.categoria.pk)
+            fabricante = Fabricante.objects.get(id=produto.fabricante.pk)
+            
+            data = {
+                'id': produto.pk,
+                'nome_produto': produto.nome_produto,
+                'descricao': produto.descricao,
+                'preco': produto.preco,
+                'estoque': produto.nome_produto,
+                'fabricante': None,
+                'categoria': None,
+            }
+            outhers_data = {
+                'dados_fabricante': {
+                    'id': fabricante.pk,
+                    'nome': fabricante.nome,
+                },
+                'dados_categoria': {
+                    'id': categoria.pk,
+                    'nome': categoria.nome,
+                },
+            }
+            data["fabricante"] = outhers_data["dados_fabricante"]
+            data["categoria"] = outhers_data["dados_categoria"]
+            list_produtos.append(data)
+
+        return Response(list_produtos, status=status.HTTP_200_OK)
+        # return Response({'menssage':'Nenhum produto encontrado'},status=status.HTTP_404_NOT_FOUND)
    
     def post(self,request:Request) -> Response:
         serializer=ProdutoSerializer(data=request.data)

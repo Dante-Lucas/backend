@@ -5,5 +5,5 @@ admin.site.register(Categoria)
 admin.site.register(Fabricante)
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ['id','nome_produto','estoque','categoria','preco']
+    list_display = ['id','nome_produto','estoque','categoria','preco','fabricante','categoria']
     list_filter = ['fabricante','categoria']

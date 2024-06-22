@@ -29,8 +29,8 @@ class ProdutoSerializer(serializers.ModelSerializer):
         
         categorias =None
         try:
-            cate, created = Categoria.objects.get_or_create(nome=categoria)
+            cate, created = Categoria.objects.get_or_create(nome=cate)
         except Categoria.DoesNotExist:
             raise serializers.ValidationError('Categoria não encontrada')
-        produto = Produto.objects.create(fabricante=fabricantes, categoria=categorias, **validated_data) 
+        produto = Produto.objects.create(fabricante=fabricantes, categoria=cate, **validated_data) 
         return produto
