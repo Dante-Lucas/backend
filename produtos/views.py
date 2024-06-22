@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer,BrowsableAPIRenderer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from authentication.models import User
 from .serializers import ProdutoSerializer,CategoriaSerializer,FabricanteSerializer
@@ -69,6 +70,8 @@ class FabricanteView(APIView):
 
 class ProdutoView(APIView):
     permission_classes = [AllowAny]
+    parser_classes = [JSONParser]
+    renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
     def get(self,request:Request) -> Response:
         produtos = Produto.objects.all()
 

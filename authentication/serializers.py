@@ -18,8 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'username': 'Username already exists'}) 
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({'email': 'Email already exists'})
-        if password != password_confirm:
-            raise serializers.ValidationError({'password': 'Passwords do not match'})
+        #if password != password_confirm:
+        #    raise serializers.ValidationError({'password': 'Passwords do not match'})
         return data
 
     def create(self, validated_data):

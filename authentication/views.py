@@ -18,10 +18,11 @@ from .serializers import UserSerializer,LoginSerializer
 
 class RegisterAPIView(APIView):
     permission_classes = [AllowAny]
-    parser_classes = [JSONParser]
+    
     renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
 
     def post(self, request:Request) -> Response:
+        print(request.data)
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid(): 
             try:
@@ -35,9 +36,7 @@ class RegisterAPIView(APIView):
         return Response({'detail': 'Método não permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
-    parser_classes = [JSONParser]
     renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
-
     def post(self, request:Request) -> Response:
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -47,7 +46,7 @@ class LoginAPIView(APIView):
             if user is not None:
                 auth.login(request, user)
                 csrf_token = get_token(request)
-                return Response({'success': 'Logado com sucesso', 'csrf_token': csrf_token}, status=status.HTTP_200_OK)
+                return Response({'success': 'Logado com sucesso', 'token': csrf_token}, status=status.HTTP_200_OK)
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -56,9 +55,6 @@ class LoginAPIView(APIView):
 
 
 class LogoutAPIView(APIView):
-    permission_classes = [AllowAny]
-    parser_classes = [JSONParser]
-    renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
     def post(self,request:Request) -> Response:
             auth.logout(request)
             return Response({'success':'Deslogado com sucesso'}, status=status.HTTP_200_OK)
