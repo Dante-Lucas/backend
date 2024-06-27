@@ -42,20 +42,20 @@ INSTALLED_APPS = [
     'produtos',
     #extenções api
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',  # Autenticação por token
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',  # Permissão para usuários autenticados
     ),
     'DEFAULT_RENDERER_CLASSES': [
-        #'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     'DEFAULT_PARSER_CLASSES': [
@@ -63,7 +63,18 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+
+#CORS_ALLOWED_ORIGINS = [
+#    "http://localhost:5173",  # URL do seu app React
+    # Adicione outras URLs conforme necessário
+#]
+
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    # Adicione quaisquer outros cabeçalhos que você queira permitir
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

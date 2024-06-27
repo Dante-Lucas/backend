@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.renderers import JSONRenderer,BrowsableAPIRenderer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from authentication.models import User
@@ -52,7 +53,7 @@ class CategoriaView(APIView):
              return Response({"error": "Erro ao cadastrar a categoria."},status=status.HTTP_400_BAD_REQUEST)
 
 
-#@method_decorator([csrf_exempt],name='dispatch')
+
 class FabricanteView(APIView):
     def post(self,request:Request) -> Response:
         
@@ -69,9 +70,10 @@ class FabricanteView(APIView):
 
 
 class ProdutoView(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     parser_classes = [JSONParser]
-    renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
+    renderer_classes = [JSONRenderer,BrowsableAPIRenderer]
     def get(self,request:Request) -> Response:
         produtos = Produto.objects.all()
 
@@ -106,22 +108,18 @@ class ProdutoView(APIView):
 
         return Response(list_produtos, status=status.HTTP_200_OK)
         # return Response({'menssage':'Nenhum produto encontrado'},status=status.HTTP_404_NOT_FOUND)
-   
-    def post(self,request:Request) -> Response:
-        serializer=ProdutoSerializer(data=request.data)
+    def post(self, request: Request) -> Response:
+        serializer = ProdutoSerializer(data=request.data)
         if serializer.is_valid():
-            with transaction.atomic():
-                try:
-                    #fabricantes = Fabricante.objects.get(pk=fabricante)
-                    #categorias = Categoria.objects.get(pk=categoria)
-
-                    serializer.save()
-                    return Response({'message-success':'Produto salvo com sucesso!'},serializer.data, status=status.HTTP_201_CREATED)
-                except IntegrityError as e:
-                    return Response({'message':f'Erro ao enviar o cadastro. motivo {e}'},status=status.HTTP_400_BAD_REQUEST)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except IntegrityError as e:
+                return Response({'message': f'Erro ao enviar o cadastro. motivo {e}'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
 class ProdutoDetailsView(APIView):
-    def get(request,id):
+    def get(self,request,id):
         produto = get_object_or_404(Produto,id=id)
         serializer = ProdutoSerializer(produto) 
         if serializer is not None:
@@ -129,17 +127,16 @@ class ProdutoDetailsView(APIView):
         return Response({"message": "error"})
 
 
-    def put(request:Request,id) -> Response:
+    def put(self,request:Request,id) -> Response:
         
         produto = get_object_or_404(Produto,id=id)
         serializer = ProdutoSerializer(produto,data=request.data)
-        
-        serializer.save()
-        
-        return Response({'message':'Produto atualizado com sucesso!'},status=status.HTTP_200_OK)
-        
+        if serializer.is_valid():
+            response = ProdutoSerializer(serializer.save())
+            return Response({'message':'Produto atualizado com sucesso!'},response.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(request:Request,id) -> Response:
+    def delete(self,request:Request,id) -> Response:
         produto = get_object_or_404(Produto,id=id)
         produto.delete()
         return Response({'message':'Produto deletado com sucesso!'},status=status.HTTP_204_NO_CONTENT)
