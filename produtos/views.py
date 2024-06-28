@@ -18,7 +18,7 @@ from authentication.models import User
 from .serializers import ProdutoSerializer,CategoriaSerializer,FabricanteSerializer
 from .models import Produto,Categoria,Fabricante
 # Create your views here.
-
+messages.success
 class ProdutoListView(APIView):
    permission_classes = [IsAuthenticated]
    parser_classes = [JSONParser]
@@ -39,6 +39,14 @@ class ProdutoListView(APIView):
 
 #@method_decorator([csrf_exempt],name='dispatch')
 class CategoriaView(APIView):
+
+    def get_objects_all(self):
+        return Categoria.objects.all()
+    def get(self, request):
+        categoria = self.get_objects_all()
+
+        serializer = FabricanteSerializer(categoria, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self,request:Request) -> Response:
         
         serializer = CategoriaSerializer(data=request.data)
@@ -55,6 +63,13 @@ class CategoriaView(APIView):
 
 
 class FabricanteView(APIView):
+    def get_objects_all(self):
+        return Fabricante.objects.all()
+    def get(self, request):
+        fabricante = self.get_objects_all()
+
+        serializer = FabricanteSerializer(fabricante, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self,request:Request) -> Response:
         
         serialiazer = FabricanteSerializer(data=request.data)
@@ -77,36 +92,37 @@ class ProdutoView(APIView):
     def get(self,request:Request) -> Response:
         produtos = Produto.objects.all()
 
-        list_produtos = []
-
-        for produto in produtos:
-            categoria = Categoria.objects.get(id=produto.categoria.pk)
-            fabricante = Fabricante.objects.get(id=produto.fabricante.pk)
-            
-            data = {
-                'id': produto.pk,
-                'nome_produto': produto.nome_produto,
-                'descricao': produto.descricao,
-                'preco': produto.preco,
-                'estoque': produto.nome_produto,
-                'fabricante': None,
-                'categoria': None,
-            }
-            outhers_data = {
-                'dados_fabricante': {
-                    'id': fabricante.pk,
-                    'nome': fabricante.nome,
-                },
-                'dados_categoria': {
-                    'id': categoria.pk,
-                    'nome': categoria.nome,
-                },
-            }
-            data["fabricante"] = outhers_data["dados_fabricante"]
-            data["categoria"] = outhers_data["dados_categoria"]
-            list_produtos.append(data)
-
-        return Response(list_produtos, status=status.HTTP_200_OK)
+        serializer = ProdutoSerializer(produtos, many=True)
+        #list_produtos = []
+#
+        #for produto in produtos:
+        #    categoria = Categoria.objects.get(id=produto.categoria.pk)
+        #    fabricante = Fabricante.objects.get(id=produto.fabricante.pk)
+        #    
+        #    data = {
+        #        'id': produto.pk,
+        #        'nome_produto': produto.nome_produto,
+        #        'descricao': produto.descricao,
+        #        'preco': produto.preco,
+        #        'estoque': produto.nome_produto,
+        #        'fabricante': None,
+        #        'categoria': None,
+        #    }
+        #    outhers_data = {
+        #        'dados_fabricante': {
+        #            'id': fabricante.pk,
+        #            'nome': fabricante.nome,
+        #        },
+        #        'dados_categoria': {
+        #            'id': categoria.pk,
+        #            'nome': categoria.nome,
+        #        },
+        #    }
+        #    data["fabricante"] = outhers_data["dados_fabricante"]
+        #    data["categoria"] = outhers_data["dados_categoria"]
+        #    list_produtos.append(data)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
         # return Response({'menssage':'Nenhum produto encontrado'},status=status.HTTP_404_NOT_FOUND)
     def post(self, request: Request) -> Response:
         serializer = ProdutoSerializer(data=request.data)
@@ -133,7 +149,7 @@ class ProdutoDetailsView(APIView):
         serializer = ProdutoSerializer(produto,data=request.data)
         if serializer.is_valid():
             response = ProdutoSerializer(serializer.save())
-            return Response({'message':'Produto atualizado com sucesso!'},response.data,status=status.HTTP_200_OK)
+            return Response(response.data,status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self,request:Request,id) -> Response:
