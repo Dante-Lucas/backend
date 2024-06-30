@@ -18,7 +18,7 @@ from authentication.models import User
 from .serializers import ProdutoSerializer,CategoriaSerializer,FabricanteSerializer
 from .models import Produto,Categoria,Fabricante
 # Create your views here.
-messages.success
+
 class ProdutoListView(APIView):
    permission_classes = [IsAuthenticated]
    parser_classes = [JSONParser]

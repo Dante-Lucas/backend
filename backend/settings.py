@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import json
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,8 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2_i2mgo_7j@^t#i8_$zb(^bm9s#glfk#)77rxeyzrl=vv&=j(7'
-
+SECRET_KEY = config('SECRET_KEY', cast=str)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -114,12 +113,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
+        'ENGINE':config('ENGINE', cast=str),
+        'NAME': config('NAME', cast=str),
+        'USER': config('USER', cast=str),
+        'PASSWORD': config('PASSWORD', cast=str),
         'HOST': '',
-        'PORT': 5432
+        'PORT': config('PORT', cast=int),
     }
 }
 AUTH_USER_MODEL = 'authentication.User'
@@ -146,13 +145,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'pt-br'
+LANGUAGE_CODE = config('LANGUAGE_CODE', cast=str)
 
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = config('TIME_ZONE', cast=str)
 
-USE_I18N = True
+USE_I18N = config('USE_I18N', cast=bool)
 
-USE_TZ = True
+USE_TZ = config('USE_TZ', cast=bool)
 
 
 # Static files (CSS, JavaScript, Images)
