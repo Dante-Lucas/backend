@@ -56,7 +56,7 @@ class CategoriaView(APIView):
 
             categoria = Categoria.objects.create(nome=categorias)
             
-            return Response({"success": "Categoria cadastrada com sucesso!"},serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
         except Exception:
              return Response({"error": "Erro ao cadastrar a categoria."},status=status.HTTP_400_BAD_REQUEST)
 
@@ -78,7 +78,7 @@ class FabricanteView(APIView):
         try:
             fabricante=Fabricante.objects.create(nome=fabricantes)
 
-            return Response({'message':'Fabricante adicionado com sucesso!'})
+            return Response(serialiazer.data,status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error':'Erro ao casdatrar o fabricante.'},status=status.HTTP_400_BAD_REQUEST)
         
