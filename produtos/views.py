@@ -85,45 +85,15 @@ class FabricanteView(APIView):
 
 
 class ProdutoView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     parser_classes = [JSONParser]
     renderer_classes = [JSONRenderer,BrowsableAPIRenderer]
     def get(self,request:Request) -> Response:
         produtos = Produto.objects.all()
 
         serializer = ProdutoSerializer(produtos, many=True)
-        #list_produtos = []
-#
-        #for produto in produtos:
-        #    categoria = Categoria.objects.get(id=produto.categoria.pk)
-        #    fabricante = Fabricante.objects.get(id=produto.fabricante.pk)
-        #    
-        #    data = {
-        #        'id': produto.pk,
-        #        'nome_produto': produto.nome_produto,
-        #        'descricao': produto.descricao,
-        #        'preco': produto.preco,
-        #        'estoque': produto.nome_produto,
-        #        'fabricante': None,
-        #        'categoria': None,
-        #    }
-        #    outhers_data = {
-        #        'dados_fabricante': {
-        #            'id': fabricante.pk,
-        #            'nome': fabricante.nome,
-        #        },
-        #        'dados_categoria': {
-        #            'id': categoria.pk,
-        #            'nome': categoria.nome,
-        #        },
-        #    }
-        #    data["fabricante"] = outhers_data["dados_fabricante"]
-        #    data["categoria"] = outhers_data["dados_categoria"]
-        #    list_produtos.append(data)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return Response({'menssage':'Nenhum produto encontrado'},status=status.HTTP_404_NOT_FOUND)
+    
     def post(self, request: Request) -> Response:
         serializer = ProdutoSerializer(data=request.data)
         if serializer.is_valid():
