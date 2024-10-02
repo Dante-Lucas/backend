@@ -15,10 +15,14 @@ class UserSerializer(serializers.ModelSerializer):
         password_confirm = data.get('confirmPassword')
         telefone = data.get('telefone')
         if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError({'username': 'Username already exists'}) 
+            raise serializers.ValidationError({
+                'username': 'Username already exists'
+            })
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({'email': 'Email already exists'})
-        #if password != password_confirm:
+            raise serializers.ValidationError({
+                'email': 'Email already exists'
+            })
+        # if password != password_confirm:
         #    raise serializers.ValidationError({'password': 'Passwords do not match'})
         return data
 
@@ -27,6 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],
-            telefone=validated_data['telefone']
+            telefone=validated_data['telefone'],
         )
         return user

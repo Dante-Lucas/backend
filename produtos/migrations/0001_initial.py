@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,32 +14,77 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Categoria',
+            name="Categoria",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Fabricante',
+            name="Fabricante",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Produto',
+            name="Produto",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome_produto', models.CharField(max_length=200)),
-                ('descricao', models.TextField(blank=True)),
-                ('preco', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('estoque', models.PositiveIntegerField()),
-                ('data_criacao', models.DateTimeField(auto_now_add=True)),
-                ('ultima_atualizacao', models.DateTimeField(auto_now=True)),
-                ('categoria', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='produtos.categoria')),
-                ('fabricante', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='produtos.fabricante')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome_produto", models.CharField(max_length=200)),
+                ("descricao", models.TextField(blank=True)),
+                ("preco", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("estoque", models.PositiveIntegerField()),
+                ("data_criacao", models.DateTimeField(auto_now_add=True)),
+                ("ultima_atualizacao", models.DateTimeField(auto_now=True)),
+                (
+                    "categoria",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="produtos.categoria",
+                    ),
+                ),
+                (
+                    "fabricante",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="produtos.fabricante",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

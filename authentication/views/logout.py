@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 
 
 class LogoutAPIView(APIView):
-    def post(self, request:Request) -> Response:
+    def post(self, request: Request) -> Response:
         try:
             # Obtém o token do cabeçalho Authorization
             token_key = request.headers.get('Authorization').split(' ')[1]
@@ -16,6 +16,12 @@ class LogoutAPIView(APIView):
             token.delete()
             return Response(status=status.HTTP_200_OK)
         except Token.DoesNotExist:
-            return Response({'detail': 'Token não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'detail': 'Token não encontrado'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
-            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {'detail': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-import json
+
+import os
 from pathlib import Path
 from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +29,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,40 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'produtos',
-    #extenções api
+    # extenções api
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-
-]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',  # Autenticação por token
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # Permissão para usuários autenticados
-    ),
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-    ],
-}
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-#CORS_ALLOWED_ORIGINS = [
-#    "http://localhost:5173",  # URL do seu app React
-    # Adicione outras URLs conforme necessário
-#]
-
-CORS_ALLOW_HEADERS = [
-    'authorization',
-    'content-type',
-    # Adicione quaisquer outros cabeçalhos que você queira permitir
 ]
 
 MIDDLEWARE = [
@@ -113,7 +84,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE':config('ENGINE', cast=str),
+        'ENGINE': config('ENGINE', cast=str),
         'NAME': config('NAME', cast=str),
         'USER': config('USER', cast=str),
         'PASSWORD': config('PASSWORD', cast=str),
@@ -157,9 +128,40 @@ USE_TZ = config('USE_TZ', cast=bool)
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',  # Autenticação por token
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  # Permissão para usuários autenticados
+    ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+ 
+}
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOWED_ORIGINS = [
+#    "http://localhost:5173",  # URL do seu app React
+# Adicione outras URLs conforme necessário
+# ]
+
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    # Adicione quaisquer outros cabeçalhos que você queira permitir
+]
