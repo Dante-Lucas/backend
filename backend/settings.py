@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'authentication',
-    'produtos',
     # extenções api
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    #api
+    'authentication',
+    'produtos',
+    
 ]
 
 MIDDLEWARE = [
@@ -149,6 +151,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FileUploadParser', 
     ],
  
 }
